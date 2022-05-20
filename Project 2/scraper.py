@@ -13,19 +13,26 @@ class Scraper():
         
         product_data = []
         
-        page = requests.get("https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html")
+        DEFAULT_URI = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
+        
+        page = requests.get(DEFAULT_URI)
         
         if page.status_code == 200:
-            pased_page = BeautifulSoup(page.content,'lxml')
+            parsed_page = BeautifulSoup(page.content,'lxml')
             
-            title = pased_page.title.extract()
+            title = parsed_page.title.extract()
+            title_text = title.get_text()
+            
+            product_data.append(title_text)
  
-            table = pased_page.find('table',{'class':'table-striped'}).extract()
-            upc = table.td.extract()
+            table = parsed_page.find('table',{'class':'table-striped'}).extract()
             
+            upc = table.td.extract().get_text()
+            product_data.append(upc)
             
-            print(title)
+            print(title_text)
             print(upc)
+            print(product_data)
         return
     
     def export_product_data_csv(self,product_data):
