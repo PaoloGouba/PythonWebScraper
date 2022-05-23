@@ -3,19 +3,19 @@ from numpy import product
 import requests
 from bs4 import BeautifulSoup
 
+DEFAULT_URI = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
+
 
 class Scraper():
     def __init__(self):
         
         return
     
-    def get_product_data(self):
+    def get_product_data(self,url=DEFAULT_URI):
         
         product_data = []
         
-        DEFAULT_URI = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
-        
-        page = requests.get(DEFAULT_URI)
+        page = requests.get(url)
         
         if page.status_code == 200:
             parsed_page = BeautifulSoup(page.content,'lxml')
