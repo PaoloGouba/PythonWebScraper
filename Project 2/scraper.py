@@ -1,4 +1,5 @@
 from ast import parse
+from unicodedata import category
 from numpy import product
 import requests
 from bs4 import BeautifulSoup
@@ -20,40 +21,73 @@ class Scraper():
         if page.status_code == 200:
             parsed_page = BeautifulSoup(page.content,'lxml')
             
+            
+            # product page url            
+            page_url = url
+            product_data.append(page_url)
+            
+            table = parsed_page.find('table',{'class':'table'}).extract()
+            table_list = table.find_all('td')
+            
+            upc = table_list[0]
+            product_data.append(upc.text)
+            
+            title = parsed_page.title
+            product_data.append(title.text)
+            
             title = parsed_page.title.extract()
             title_text = title.get_text()
             
             product_data.append(title_text)
+            
+            price_including_tax = table_list[2]
+            product_data.append(price_including_tax.text)
+            
+            price_excluding_tax = table_list[3]
+            product_data.append(price_excluding_tax.text)
+            
+            number_available = table_list[5]
+            product_data.append(number_available.text)
+            
+            description_title = parsed_page.find('article',{'class':'product_page'}).find('div',{'class':'sub-header'})
+            descrption = description_title.find_next_sibling('p')
+            product_data.append(descrption.text)
+            
+            
+            category = table_list[1]
+            product_data.append(category.text)
+            
+            
+            print(product_data)
+            
+            article_header = parsed_page.find('article',{'class':'product_page'}).find('div',{'class':'row'})
+            
+            review_rating = article_header.find('div',{'class':'product_main'}).find('p',{'class':'star-rating'}).extract()
+            
+            print(review_rating)
+            #review_rating
+            #image_url
  
-            table = parsed_page.find('table',{'class':'table-striped'}).extract()
             
-            upc = table.td.extract().get_text()
-            product_data.append(upc)
             
-            # product page url
-            # upc tb
+           
+            
+            
+            
+            
             # title
             # price_including_tax tb
-            price = parsed_page.find("p",class_="price_color")
+            #price = parsed_page.find("p",class_="price_color")
             # price excluding tax tb
             # number available tb
             # product_description 
-            description_title = parsed_page.find('div',class_="product_description")
-            description = description_title.next_element
+            #description_title = parsed_page.find('div',class_="product_description")
+            #description = description_title.next_element
             # category
             # review_rating
             # image_url
             
-            table_info = parsed_page.find_all('td')
-            
-            
-            
-            print(title_text)
-            print(upc)
-            print(product_data)
-            print("this is the price : " + str(price))
-            #print('this is all table info :' + str(table_info))
-            print('this is the description : ' + str(description))
+
             
         return product_data
     
