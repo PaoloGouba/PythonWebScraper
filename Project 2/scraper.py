@@ -30,10 +30,32 @@ class Scraper():
             upc = table.td.extract().get_text()
             product_data.append(upc)
             
+            # product page url
+            # upc tb
+            # title
+            # price_including_tax tb
+            price = parsed_page.find("p",class_="price_color")
+            # price excluding tax tb
+            # number available tb
+            # product_description 
+            description_title = parsed_page.find('div',class_="product_description")
+            description = description_title.next_element
+            # category
+            # review_rating
+            # image_url
+            
+            table_info = parsed_page.find_all('td')
+            
+            
+            
             print(title_text)
             print(upc)
             print(product_data)
-        return
+            print("this is the price : " + str(price))
+            #print('this is all table info :' + str(table_info))
+            print('this is the description : ' + str(description))
+            
+        return product_data
     
     def export_product_data_csv(self,product_data):
         # get_product_data and write csv with data
