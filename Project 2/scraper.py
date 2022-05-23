@@ -21,8 +21,6 @@ class Scraper():
         if page.status_code == 200:
             parsed_page = BeautifulSoup(page.content,'lxml')
             
-            
-            # product page url            
             page_url = url
             product_data.append(page_url)
             
@@ -58,36 +56,16 @@ class Scraper():
             product_data.append(category.text)
             
             
-            print(product_data)
-            
             article_header = parsed_page.find('article',{'class':'product_page'}).find('div',{'class':'row'})
-            
-            review_rating = article_header.find('div',{'class':'product_main'}).find('p',{'class':'star-rating'}).extract()
-            
-            print(review_rating)
+            review_rating_data = article_header.find('div',{'class':'product_main'}).find('p',{'class':'star-rating'}).extract()
+            review_rating_data = review_rating_data['class']
+            review_rating = review_rating_data[1]
+            product_data.append(review_rating)
+
+            print(product_data)
+           
             #review_rating
             #image_url
- 
-            
-            
-           
-            
-            
-            
-            
-            # title
-            # price_including_tax tb
-            #price = parsed_page.find("p",class_="price_color")
-            # price excluding tax tb
-            # number available tb
-            # product_description 
-            #description_title = parsed_page.find('div',class_="product_description")
-            #description = description_title.next_element
-            # category
-            # review_rating
-            # image_url
-            
-
             
         return product_data
     
