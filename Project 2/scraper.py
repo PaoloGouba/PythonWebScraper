@@ -34,11 +34,6 @@ class Scraper():
             title = parsed_page.title
             product_data.append(title.text)
             
-            title = parsed_page.title.extract()
-            title_text = title.get_text()
-            
-            product_data.append(title_text)
-            
             price_including_tax = table_list[2]
             product_data.append(price_including_tax.text)
             
@@ -95,6 +90,13 @@ class Scraper():
             
             writer.writerow(HEADER)
             writer.writerow(row)
+            
+        #change delimiter
+        
+        reader = csv.reader(open("product.csv", "r"), delimiter=',')
+        writer = csv.writer(open("output.csv", 'w'), delimiter='|')
+        writer.writerows(reader)
+            
          
         
         return
