@@ -101,16 +101,25 @@ class Scraper():
         
         return
     
+    def check_next_page():
+        pass
+    
     def get_category_data(self,url):
-        # count product, for each product get_product_data
+        
+        #if check_next_page is true :
+        #   while check_next_page is true :
+        #       for book in books :
+        #           get_product_data
+        #           export_product_data_csv
+        #   get_product_data
+        #   export_product_data_csv
+        
         pass
     
-    def export_category_data_csv(self,category_data):
-        # get_category_data and write a csv with data
-        pass
-    
+
     def get_site_data(self,url):
-        # for each category get get_category_data(self)
+        # for category in categories :
+        #   get_category_data
         pass
     
     
