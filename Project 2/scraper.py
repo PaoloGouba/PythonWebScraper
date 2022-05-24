@@ -62,7 +62,14 @@ class Scraper():
             review_rating = review_rating_data[1]
             product_data.append(review_rating)
 
-            print(product_data)
+            
+            
+            img_url = parsed_page.find('article',{'class':'product_page'}).find('div',{'class':'row'}).find('div',{'class':'col-sm-6'}).find('img')
+            img_url = img_url['src']
+            img_url = img_url.replace('../../','https://books.toscrape.com/')
+          
+            
+            product_data.append(img_url)
            
             #review_rating
             #image_url
@@ -70,8 +77,18 @@ class Scraper():
         return product_data
     
     def export_product_data_csv(self,product_data):
-        # get_product_data and write csv with data
-        pass
+        
+        product_data = self.get_product_data()
+        
+        for data in product_data : 
+            data = data.replace('\n','')
+            data = data.replace('   ','')
+        
+        with open("product.csv", "w") as file:
+            for data in product_data : 
+                file.write(str(data) + "\n")
+        
+        return
     
     def get_category_data(self,url):
         # count product, for each product get_product_data
@@ -89,4 +106,6 @@ class Scraper():
     
 python = Scraper()    
 
-python.get_product_data()
+pd = python.get_product_data()
+
+python.export_product_data_csv(pd)
