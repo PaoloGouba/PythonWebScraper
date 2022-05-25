@@ -32,7 +32,11 @@ class Scraper():
             product_data.append(upc.text)
             
             title = parsed_page.title
-            product_data.append(title.text)
+            title = title.text
+            
+            title = title.strip()
+           
+            product_data.append(title)
             
             price_including_tax = table_list[2]
             product_data.append(price_including_tax.text)
@@ -81,20 +85,17 @@ class Scraper():
         row = []
         
         for data in product_data :
-            data = data.replace('\n','')
-            data = data.replace('   ','')
             row.append(str(data))
         
-        with open("product.csv", "w") as file:
+        with open("product.csv", "w",newline='') as file:
             writer = csv.writer(file)
-            
             writer.writerow(HEADER)
             writer.writerow(row)
             
         #change delimiter
         
-        reader = csv.reader(open("product.csv", "r"), delimiter=',')
-        writer = csv.writer(open("output.csv", 'w'), delimiter='|')
+        reader = csv.reader(open("product.csv", "r",newline=''), delimiter=',')
+        writer = csv.writer(open("output.csv", 'w',newline=''), delimiter='|')
         writer.writerows(reader)
             
          
