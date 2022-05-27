@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 
 DEFAULT_URI = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
-
+DEFAULT_URI_TEST = 'https://books.toscrape.com/catalogue/category/books/music_14/index.html'
 
 class Scraper():
     def __init__(self):
@@ -87,23 +87,34 @@ class Scraper():
         for data in product_data :
             row.append(str(data))
         
-        with open("product.csv", "w",newline='') as file:
+        file_name = str(row[7]) + '.csv' 
+        with open(file_name, "w",newline='') as file:
             writer = csv.writer(file)
             writer.writerow(HEADER)
             writer.writerow(row)
             
-        #change delimiter
-        
-        reader = csv.reader(open("product.csv", "r",newline=''), delimiter=',')
-        writer = csv.writer(open("output.csv", 'w',newline=''), delimiter='|')
-        writer.writerows(reader)
-            
-         
         
         return
     
-    def check_next_page():
-        pass
+    def next_button_exist(self,url=DEFAULT_URI_TEST):
+        
+        page = requests.get(url)
+        
+        if page.status_code == 200:
+            parsed_page = BeautifulSoup(page.content,'lxml')
+            
+            section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
+            next_button = section.find('li',{'class':'next'})
+            if next_button is None :
+                print('false')
+                return False
+            else : 
+                print('True')
+                return True
+            
+            
+        return            
+        
     
     def get_category_data(self,url):
         
@@ -127,6 +138,8 @@ class Scraper():
     
 python = Scraper()    
 
-pd = python.get_product_data()
+#pd = python.get_product_data()
 
-python.export_product_data_csv(pd)
+#python.export_product_data_csv(pd)
+
+python.next_button_exist()
