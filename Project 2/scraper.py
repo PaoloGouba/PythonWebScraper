@@ -116,17 +116,32 @@ class Scraper():
         return            
         
     
-    def get_category_data(self,url):
+    def get_category_data(self,url=DEFAULT_URI_TEST):
+
+        page = requests.get(url)
+                
+        if page.status_code == 200:
+            parsed_page = BeautifulSoup(page.content,'lxml')  
+            
+            section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
+                  
+            books = section.find_all('li')
         
-        #if check_next_page is true :
-        #   while check_next_page is true :
-        #       for book in books :
-        #           get_product_data
-        #           export_product_data_csv
-        #   get_product_data
-        #   export_product_data_csv
+            #if next_button_exist(url) is true :
+            #   while next_button_exist(url) is true :
+            #       for book in books :
+            #           dynamic_link = create link
+            #           product_data = get_product_data(dynamic_link)
+            #           export_product_data_csv(product_data)
+            #else : 
+            #    for book in books :
+            #           dynamic_link = create link
+            #           product_data = get_product_data(dynamic_link)
+            #           export_product_data_csv(product_data)
+            
+            print(books)
         
-        pass
+        return
     
 
     def get_site_data(self,url):
@@ -142,4 +157,6 @@ python = Scraper()
 
 #python.export_product_data_csv(pd)
 
-python.next_button_exist()
+#python.next_button_exist()
+
+python.get_category_data()
