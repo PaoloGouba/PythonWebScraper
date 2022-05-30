@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 
 DEFAULT_URI = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
-DEFAULT_URI_CATEGORY = 'https://books.toscrape.com/catalogue/category/books/business_35/index.html'
+DEFAULT_URI_TEST = 'https://books.toscrape.com/catalogue/category/books/music_14/index.html'
 
 class Scraper():
     def __init__(self):
@@ -80,26 +80,23 @@ class Scraper():
         
         HEADER = ['product_page_url','universal_product_code','title','price_including_tax','price_excluding_tax','number_available','product_description','category','review_rating','image_url']
         
-        books_link = self.find_books_url()
-        
-        product_data = self.get_product_data(books_link)
+        product_data = self.get_product_data()
         
         row = []
-        
-        writer = csv.writer(file)
-        writer.writerow(HEADER)
         
         for data in product_data :
             row.append(str(data))
         
         file_name = str(row[7]) + '.csv' 
-        with open(file_name, "a",newline='') as file:
+        with open(file_name, "w",newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(HEADER)
             writer.writerow(row)
             
         
         return
     
-    def next_button_exist(self,url=DEFAULT_URI_CATEGORY):
+    def next_button_exist(self,url=DEFAULT_URI_TEST):
         
         page = requests.get(url)
         
@@ -118,10 +115,9 @@ class Scraper():
             
         return            
         
-    def find_books_url(self,url=DEFAULT_URI_CATEGORY):
-        
-        books_url = []
-        
+    
+    def get_category_data(self,url=DEFAULT_URI_TEST):
+
         page = requests.get(url)
                 
         if page.status_code == 200:
@@ -129,35 +125,23 @@ class Scraper():
             
             section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
                   
-            books = section.find_all('h3')
+            books = section.find_all('li')
+        
+            #if next_button_exist(url) is true :
+            #   while next_button_exist(url) is true :
+            #       for book in books :
+            #           dynamic_link = create link
+            #           product_data = get_product_data(dynamic_link)
+            #           export_product_data_csv(product_data)
+            #else : 
+            #    for book in books :
+            #           dynamic_link = create link
+            #           product_data = get_product_data(dynamic_link)
+            #           export_product_data_csv(product_data)
             
-        for book in books :
-            
-            book_url = book.find('a')
-            book_url = book_url['href']
-            book_url = 'https://books.toscrape.com/' + book_url
-            books_url.append(book_url)
-            print(books_url)
+            print(books)
         
-        return books_url
-    
-    def get_category_data(self,url=DEFAULT_URI_CATEGORY):
-        
-        books = self.find_books_url()
-        
-        for book in books : 
-            print('ciao')
-            print(book)
-            product_data = self.get_product_data(book)
-            self.export_product_data_csv(product_data) 
-                
-        return                
-        
-        
-        
-        
-                          
-                
+        return
     
 
     def get_site_data(self,url):
@@ -165,15 +149,14 @@ class Scraper():
         #   get_category_data
         pass
     
-    def download_images(self,url):
-        pass
+    
     
 python = Scraper()    
 
-pd = python.get_product_data()
+#pd = python.get_product_data()
 
-python.export_product_data_csv(pd)
+#python.export_product_data_csv(pd)
 
-url = 'https://books.toscrape.com/catalogue/category/books/music_14/index.html'
+#python.next_button_exist()
 
-python.get_category_data(url)
+python.get_category_data()
