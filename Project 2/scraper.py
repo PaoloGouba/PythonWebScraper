@@ -5,15 +5,16 @@ from numpy import product
 import requests
 from bs4 import BeautifulSoup
 
-DEFAULT_URI = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
-DEFAULT_URI_TEST = 'https://books.toscrape.com/catalogue/category/books/music_14/index.html'
+PRODUCT_URL = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
+CATEGORY_URL = 'https://books.toscrape.com/catalogue/category/books/music_14/index.html'
+HOME_URL = 'https://books.toscrape.com/index.html'
 
 class Scraper():
     def __init__(self):
         
         return
     
-    def get_product_data(self,url=DEFAULT_URI):
+    def get_product_data(self,url=PRODUCT_URL):
         
         product_data = []
         
@@ -96,7 +97,7 @@ class Scraper():
         
         return
     
-    def next_button_exist(self,url=DEFAULT_URI_TEST):
+    def next_button_exist(self,url=CATEGORY_URL):
         
         page = requests.get(url)
         
@@ -116,7 +117,7 @@ class Scraper():
         return            
         
     
-    def get_category_data(self,url=DEFAULT_URI_TEST):
+    def get_books_url(self,url=CATEGORY_URL):
 
         page = requests.get(url)
                 
@@ -125,7 +126,15 @@ class Scraper():
             
             section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
                   
-            books = section.find_all('li')
+            books = section.find_all('h3')
+            books_url = []
+            for book in books :
+                book_url = book.find('a')
+                book_url = book_url['href']
+                book_url = book_url.replace('../../..','https://books.toscrape.com/catalogue')
+                books_url.append(book_url)
+            
+            print(books_url)
         
             #if next_button_exist(url) is true :
             #   while next_button_exist(url) is true :
@@ -139,14 +148,36 @@ class Scraper():
             #           product_data = get_product_data(dynamic_link)
             #           export_product_data_csv(product_data)
             
-            print(books)
+            
         
-        return
+        return books_url
+    
+    def get_categories_urls(self,url=HOME_URL):
+        
+        
+        page = requests.get(url)
+        
+        if page.status_code == 200:
+            parsed_page = BeautifulSoup(page.content,'lxml')
+            
+        categories_urls = []    
+        
+        side_bar_list = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'row'}).find('ul',{'class':'nav'}).find_all('li')
+        
+        for item in side_bar_list :
+            category_url = item.find('a')
+            category_url = category_url['href']
+            category_url = 'https://books.toscrape.com/' + category_url
+            categories_urls.append(category_url)
+        
+        print(categories_urls)
+        return #categories_urls
+    
     
 
-    def get_site_data(self,url):
+    def get_site_data(self,url=HOME_URL):
         # for category in categories :
-        #   get_category_data
+        #   get_books_url
         pass
     
     
@@ -159,4 +190,6 @@ python = Scraper()
 
 #python.next_button_exist()
 
-python.get_category_data()
+#python.get_books_url()
+
+python.get_categories_urls()
