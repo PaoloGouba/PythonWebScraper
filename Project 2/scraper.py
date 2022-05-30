@@ -1,13 +1,13 @@
 import csv
-from ast import parse
 from unicodedata import category
-from numpy import product
 import requests
 from bs4 import BeautifulSoup
 
 PRODUCT_URL = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
 CATEGORY_URL = 'https://books.toscrape.com/catalogue/category/books/music_14/index.html'
 HOME_URL = 'https://books.toscrape.com/index.html'
+CSV_HEADER = ['product_page_url','universal_product_code','title','price_including_tax','price_excluding_tax','number_available','product_description','category','review_rating','image_url']
+HEADER = "SEP=,"
 
 class Scraper():
     def __init__(self):
@@ -76,24 +76,33 @@ class Scraper():
             #image_url
             
         return product_data
+    def get_category_name(self,product_data):
+        category_name = product_data[7]
+        return category_name
+    
+    def create_csv(self,category_name):
+        
+        file_name = category_name + '.csv' 
+        with open(file_name, "a",newline='') as file:
+            writer = csv.writer(file)
+            #writer.writerow(HEADER)
+            writer.writerow(CSV_HEADER)
+
+        return
+    
     
     def export_product_data_csv(self,product_data):
-        
-        HEADER = ['product_page_url','universal_product_code','title','price_including_tax','price_excluding_tax','number_available','product_description','category','review_rating','image_url']
         
         product_data = self.get_product_data()
         
         row = []
-        
         for data in product_data :
             row.append(str(data))
         
         file_name = str(row[7]) + '.csv' 
-        with open(file_name, "w",newline='') as file:
+        with open(file_name, "a",newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(HEADER)
             writer.writerow(row)
-            
         
         return
     
@@ -182,14 +191,15 @@ class Scraper():
     
     
     
-python = Scraper()    
+oc_scraper = Scraper()    
 
-#pd = python.get_product_data()
+product_data = oc_scraper.get_product_data()
+category_name = oc_scraper.get_category_name(product_data)
+oc_scraper.create_csv(category_name)
+oc_scraper.export_product_data_csv(product_data)
 
-#python.export_product_data_csv(pd)
+#oc_scraper.next_button_exist()
 
-#python.next_button_exist()
+#oc_scraper.get_books_url()
 
-#python.get_books_url()
-
-python.get_categories_urls()
+#oc_scraper.get_categories_urls()

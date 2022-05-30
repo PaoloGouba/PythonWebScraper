@@ -16,5 +16,6 @@ This script has more features :
 - Create a CSV file using previews data has header
 - Get all 'Business' books data and store previews informations in a new CSV file (app have to change page if necessary)
 - Get all informations from the website http://books.toscrape.com/
-- Store informations in differents CSV for categories
+- Store informations in differents CSV for categories 
+    - the name of the file have to contain the category name
 - Store all images in a ZIP folder
