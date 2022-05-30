@@ -180,14 +180,25 @@ class Scraper():
             categories_urls.append(category_url)
         
         print(categories_urls)
-        return #categories_urls
+        return categories_urls
     
     
 
     def get_site_data(self,url=HOME_URL):
-        # for category in categories :
-        #   get_books_url
-        pass
+        
+        categories_urls = self.get_categories_urls()
+        
+        for cat_url in categories_urls :
+            book_url_list = self.get_books_url(cat_url)
+            
+            for book_url in book_url_list :
+                product_data = self.get_product_data(book_url)
+                category_name = self.get_category_name(product_data)
+                self.create_csv(category_name)
+                self.export_product_data_csv(product_data)
+                
+
+        return
     
     
     
@@ -203,3 +214,5 @@ oc_scraper.export_product_data_csv(product_data)
 #oc_scraper.get_books_url()
 
 #oc_scraper.get_categories_urls()
+
+oc_scraper.get_site_data()
