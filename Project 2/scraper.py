@@ -52,8 +52,12 @@ class Scraper():
             descrption = description_title.find_next_sibling('p')
             product_data.append(descrption.text)
             
+            header_nav = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('ul',{'class':'breadcrumb'})
+            category_tag = header_nav.find_all('li')
+            category_pas = category_tag[2]
+            category = category_pas.find('a')
             
-            category = table_list[1]
+            #category = table_list[1]
             product_data.append(category.text)
             
             
@@ -140,7 +144,8 @@ class Scraper():
             for book in books :
                 book_url = book.find('a')
                 book_url = book_url['href']
-                book_url = book_url.replace('../../..','https://books.toscrape.com/catalogue')
+                book_url = book_url.replace('../..','https://books.toscrape.com/catalogue')
+                book_url = book_url.replace('../','')
                 books_url.append(book_url)
             
             print(books_url)
@@ -188,15 +193,26 @@ class Scraper():
         
         categories_urls = self.get_categories_urls()
         
-        for cat_url in categories_urls :
+        i_cat = 0
+        categories_urls_len = len(categories_urls)
+        
+        while categories_urls_len > i_cat :
+            cat_url = categories_urls[i_cat]
             book_url_list = self.get_books_url(cat_url)
             
-            for book_url in book_url_list :
+            i_book = 0
+            book_url_list_len = len(book_url_list)
+            
+            
+            while book_url_list_len > i_book :
+                book_url = book_url_list[i_book]
                 product_data = self.get_product_data(book_url)
                 category_name = self.get_category_name(product_data)
                 self.create_csv(category_name)
                 self.export_product_data_csv(product_data)
-                
+                i_book +=1
+            
+            i_cat += 1    
 
         return
     
@@ -204,10 +220,10 @@ class Scraper():
     
 oc_scraper = Scraper()    
 
-product_data = oc_scraper.get_product_data()
-category_name = oc_scraper.get_category_name(product_data)
-oc_scraper.create_csv(category_name)
-oc_scraper.export_product_data_csv(product_data)
+#product_data = oc_scraper.get_product_data()
+#category_name = oc_scraper.get_category_name(product_data)
+#oc_scraper.create_csv(category_name)
+#oc_scraper.export_product_data_csv(product_data)
 
 #oc_scraper.next_button_exist()
 
