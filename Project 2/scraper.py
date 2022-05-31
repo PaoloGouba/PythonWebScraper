@@ -1,5 +1,4 @@
 import csv
-from unicodedata import category
 import requests
 from bs4 import BeautifulSoup
 
@@ -176,7 +175,7 @@ class Scraper():
             
         categories_urls = []    
         
-        side_bar_list = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'row'}).find('ul',{'class':'nav'}).find_all('li')
+        side_bar_list = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'row'}).find('ul',{'class':'nav'}).find('li').find_all('li')
         
         for item in side_bar_list :
             category_url = item.find('a')
@@ -189,20 +188,52 @@ class Scraper():
     
     def get_category_data(self,url=CATEGORY_URL):
         
-        book_url_list = self.get_books_url(url)
-        i_book = 0
-        book_url_list_len = len(book_url_list)
-        pd_create = self.get_product_data(book_url_list[0])
-        category_name = self.get_category_name(pd_create)
-        self.create_csv(category_name)
+        if self.next_button_exist(url) is True :
             
-        while book_url_list_len > i_book :
-            book_url = book_url_list[i_book]
-            product_data = self.get_product_data(book_url)
-
-            self.export_product_data_csv(product_data,book_url)
-            i_book +=1
+            while self.next_button_exist(url) is True :
         
+                book_url_list = self.get_books_url(url)
+                i_book = 0
+                book_url_list_len = len(book_url_list)
+                pd_create = self.get_product_data(book_url_list[0])
+                category_name = self.get_category_name(pd_create)
+                self.create_csv(category_name)
+                    
+                while book_url_list_len > i_book :
+                    book_url = book_url_list[i_book]
+                    product_data = self.get_product_data(book_url)
+
+                    self.export_product_data_csv(product_data,book_url)
+                    i_book +=1
+                    
+                    
+                #change url
+            
+                page = requests.get(url)
+                
+                if page.status_code == 200:
+                    parsed_page = BeautifulSoup(page.content,'lxml')
+                    
+                    section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
+                    next_button = section.find('li',{'class':'next'}).find('a')
+                    page = next_button['href']
+                    url = url.replace('index.html',str(page))
+                    
+        elif self.next_button_exist(url) is False :
+            book_url_list = self.get_books_url(url)
+            i_book = 0
+            book_url_list_len = len(book_url_list)
+            pd_create = self.get_product_data(book_url_list[0])
+            category_name = self.get_category_name(pd_create)
+            self.create_csv(category_name)
+                
+            while book_url_list_len > i_book :
+                book_url = book_url_list[i_book]
+                product_data = self.get_product_data(book_url)
+
+                self.export_product_data_csv(product_data,book_url)
+                i_book +=1
+ 
         
         return
 
@@ -214,20 +245,11 @@ class Scraper():
         
         while categories_urls_len > i_cat :
             cat_url = categories_urls[i_cat]
-            book_url_list = self.get_books_url(cat_url)
-            i_book = 0
-            book_url_list_len = len(book_url_list)
+            self.get_category_data(cat_url)
+            
             i_cat += 1 
             
-            while book_url_list_len > i_book :
-                book_url = book_url_list[i_book]
-                url = book_url
-                product_data = self.get_product_data(url)
-                category_name = self.get_category_name(product_data)
-                self.create_csv(category_name)
-                self.export_product_data_csv(product_data)
-                i_book +=1
-               
+
 
         return
     
@@ -246,6 +268,6 @@ oc_scraper = Scraper()
 
 #oc_scraper.get_categories_urls()
 
-oc_scraper.get_category_data()
+#oc_scraper.get_category_data()
 
-#oc_scraper.get_site_data() to test
+oc_scraper.get_site_data()
