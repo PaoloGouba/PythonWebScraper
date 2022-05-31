@@ -187,32 +187,47 @@ class Scraper():
         print(categories_urls)
         return categories_urls
     
-    
+    def get_category_data(self,url=CATEGORY_URL):
+        
+        book_url_list = self.get_books_url(url)
+        i_book = 0
+        book_url_list_len = len(book_url_list)
+        pd_create = self.get_product_data(book_url_list[0])
+        category_name = self.get_category_name(pd_create)
+        self.create_csv(category_name)
+            
+        while book_url_list_len > i_book :
+            book_url = book_url_list[i_book]
+            product_data = self.get_product_data(book_url)
+
+            self.export_product_data_csv(product_data)
+            i_book +=1
+        
+        
+        return
 
     def get_site_data(self,url=HOME_URL):
         
         categories_urls = self.get_categories_urls()
-        
         i_cat = 0
         categories_urls_len = len(categories_urls)
         
         while categories_urls_len > i_cat :
             cat_url = categories_urls[i_cat]
             book_url_list = self.get_books_url(cat_url)
-            
             i_book = 0
             book_url_list_len = len(book_url_list)
-            
+            i_cat += 1 
             
             while book_url_list_len > i_book :
                 book_url = book_url_list[i_book]
-                product_data = self.get_product_data(book_url)
+                url = book_url
+                product_data = self.get_product_data(url)
                 category_name = self.get_category_name(product_data)
                 self.create_csv(category_name)
                 self.export_product_data_csv(product_data)
                 i_book +=1
-            
-            i_cat += 1    
+               
 
         return
     
@@ -231,4 +246,6 @@ oc_scraper = Scraper()
 
 #oc_scraper.get_categories_urls()
 
-oc_scraper.get_site_data()
+oc_scraper.get_category_data()
+
+#oc_scraper.get_site_data() to test
