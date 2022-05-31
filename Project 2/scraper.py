@@ -95,9 +95,9 @@ class Scraper():
         return
     
     
-    def export_product_data_csv(self,product_data):
+    def export_product_data_csv(self,product_data,url):
         
-        product_data = self.get_product_data()
+        product_data = self.get_product_data(url)
         
         row = []
         for data in product_data :
@@ -200,7 +200,7 @@ class Scraper():
             book_url = book_url_list[i_book]
             product_data = self.get_product_data(book_url)
 
-            self.export_product_data_csv(product_data)
+            self.export_product_data_csv(product_data,book_url)
             i_book +=1
         
         
