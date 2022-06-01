@@ -2,6 +2,7 @@ import csv
 import requests
 from bs4 import BeautifulSoup
 
+
 PRODUCT_URL = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
 CATEGORY_URL = 'https://books.toscrape.com/catalogue/category/books/music_14/index.html'
 HOME_URL = 'https://books.toscrape.com/index.html'
@@ -82,7 +83,6 @@ class Scraper():
     def get_category_name(self,product_data):
         category_name = product_data[7]
         return category_name
-    
     def create_csv(self,category_name):
         
         file_name = category_name + '.csv' 
@@ -92,14 +92,13 @@ class Scraper():
             writer.writerow(CSV_HEADER)
 
         return
-    
-    
-    def export_product_data_csv(self,product_data,url):
+    def export_product_data_csv(self,product_data,url=PRODUCT_URL):
         
         product_data = self.get_product_data(url)
         
         row = []
         for data in product_data :
+            data = data.uni
             row.append(str(data))
         
         file_name = str(row[7]) + '.csv' 
@@ -108,7 +107,6 @@ class Scraper():
             writer.writerow(row)
         
         return
-    
     def next_button_exist(self,url=CATEGORY_URL):
         
         page = requests.get(url)
@@ -127,8 +125,21 @@ class Scraper():
             
             
         return            
+    def save_image(self,product_data):
         
-    
+        product_data = self.get_product_data()
+        image_url = product_data[9]
+        image_name = product_data[2] + '.jpg'
+        image_name = image_name.replace(' ','_')
+        image_name = image_name.replace('|','')
+        image_name = image_name.replace(',','_')
+        image_name = image_name.replace('.','')
+        
+        img_data = requests.get(image_url).content
+        
+        with open(image_name, 'wb') as handler:
+            handler.write(img_data)
+        return    
     def get_books_url(self,url=CATEGORY_URL):
 
         page = requests.get(url)
@@ -164,7 +175,6 @@ class Scraper():
             
         
         return books_url
-    
     def get_categories_urls(self,url=HOME_URL):
         
         
@@ -185,7 +195,6 @@ class Scraper():
         
         print(categories_urls)
         return categories_urls
-    
     def get_category_data(self,url=CATEGORY_URL):
         
         if self.next_button_exist(url) is True :
@@ -216,8 +225,8 @@ class Scraper():
                     
                     section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
                     next_button = section.find('li',{'class':'next'}).find('a')
-                    page = next_button['href']
-                    url = url.replace('index.html',str(page))
+                    page_url = next_button['href']
+                    url = url.replace('index.html',str(page_url))
                     
         elif self.next_button_exist(url) is False :
             book_url_list = self.get_books_url(url)
@@ -236,8 +245,7 @@ class Scraper():
  
         
         return
-
-    def get_site_data(self,url=HOME_URL):
+    def get_site_data(self):
         
         categories_urls = self.get_categories_urls()
         i_cat = 0
@@ -257,10 +265,11 @@ class Scraper():
     
 oc_scraper = Scraper()    
 
-#product_data = oc_scraper.get_product_data()
+product_data = oc_scraper.get_product_data()
 #category_name = oc_scraper.get_category_name(product_data)
 #oc_scraper.create_csv(category_name)
 #oc_scraper.export_product_data_csv(product_data)
+#oc_scraper.save_image(product_data)
 
 #oc_scraper.next_button_exist()
 
@@ -268,6 +277,8 @@ oc_scraper = Scraper()
 
 #oc_scraper.get_categories_urls()
 
-#oc_scraper.get_category_data()
+#oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
 
-oc_scraper.get_site_data()
+
+
+#oc_scraper.get_site_data()
