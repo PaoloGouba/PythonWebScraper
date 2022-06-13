@@ -1,5 +1,7 @@
 import csv
 import requests
+import unidecode
+import pandas as pd
 from bs4 import BeautifulSoup
 
 
@@ -49,7 +51,10 @@ class Scraper():
             product_data.append(number_available.text)
             
             description_title = parsed_page.find('article',{'class':'product_page'}).find('div',{'class':'sub-header'})
+            
             descrption = description_title.find_next_sibling('p')
+            #if descrption is None : à tester avant 
+                
             product_data.append(descrption.text)
             
             header_nav = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('ul',{'class':'breadcrumb'})
@@ -98,7 +103,7 @@ class Scraper():
         
         row = []
         for data in product_data :
-            data = data.uni
+            data = unidecode.unidecode(data)
             row.append(str(data))
         
         file_name = str(row[7]) + '.csv' 
@@ -133,13 +138,53 @@ class Scraper():
         image_name = image_name.replace(' ','_')
         image_name = image_name.replace('|','')
         image_name = image_name.replace(',','_')
-        image_name = image_name.replace('.','')
+        #image_name = image_name.replace('.','')
         
         img_data = requests.get(image_url).content
         
         with open(image_name, 'wb') as handler:
             handler.write(img_data)
-        return    
+        return 
+      
+    def store_images(self,url=HOME_URL):
+        
+        books_urls = self.get_books_url(url)
+        
+        for book_url in books_urls :
+            book_url = 'https://books.toscrape.com/' + book_url
+            product_data = self.get_product_data(book_url)
+            self.save_image(product_data)
+        
+        return ('Images are created !') 
+    
+    def change_url(self,url=HOME_URL):
+        
+        
+        page = requests.get(url)
+        
+        if page.status_code == 200:
+            
+            parsed_page = BeautifulSoup(page.content,'lxml')
+            section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
+            next_button = section.find('li',{'class':'next'}).find('a')
+            
+            page_url = next_button['href']
+            
+            endpoint = url.replace('index.html','')
+            
+            if 'index.html' in url :
+                url = url.replace('index.html',str(page_url))   
+                print('ciao')  
+            else : 
+                print('this is not the index page') 
+                url = url.replace('index.html','')
+                url = endpoint + page_url  
+               
+
+
+        
+        return url
+    
     def get_books_url(self,url=CATEGORY_URL):
 
         page = requests.get(url)
@@ -195,6 +240,7 @@ class Scraper():
         
         print(categories_urls)
         return categories_urls
+    
     def get_category_data(self,url=CATEGORY_URL):
         
         if self.next_button_exist(url) is True :
@@ -204,8 +250,7 @@ class Scraper():
                 book_url_list = self.get_books_url(url)
                 i_book = 0
                 book_url_list_len = len(book_url_list)
-                pd_create = self.get_product_data(book_url_list[0])
-                category_name = self.get_category_name(pd_create)
+                category_name = self.get_category_name(self.get_product_data(book_url_list[0]))
                 self.create_csv(category_name)
                     
                 while book_url_list_len > i_book :
@@ -218,22 +263,13 @@ class Scraper():
                     
                 #change url
             
-                page = requests.get(url)
-                
-                if page.status_code == 200:
-                    parsed_page = BeautifulSoup(page.content,'lxml')
-                    
-                    section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
-                    next_button = section.find('li',{'class':'next'}).find('a')
-                    page_url = next_button['href']
-                    url = url.replace('index.html',str(page_url))
+                url = self.change_url(url)
                     
         elif self.next_button_exist(url) is False :
             book_url_list = self.get_books_url(url)
             i_book = 0
             book_url_list_len = len(book_url_list)
-            pd_create = self.get_product_data(book_url_list[0])
-            category_name = self.get_category_name(pd_create)
+            category_name = self.get_category_name(self.get_product_data(book_url_list[0]))
             self.create_csv(category_name)
                 
             while book_url_list_len > i_book :
@@ -261,7 +297,7 @@ class Scraper():
 
         return
     
-    
+
     
 oc_scraper = Scraper()    
 
@@ -277,8 +313,17 @@ product_data = oc_scraper.get_product_data()
 
 #oc_scraper.get_categories_urls()
 
-#oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
+oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
 
-
+#oc_scraper.store_images()
 
 #oc_scraper.get_site_data()
+
+#wee = oc_scraper.change_url('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
+
+#wee = oc_scraper.change_url()
+
+#print(wee)
+
+
+#we get for download images
