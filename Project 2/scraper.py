@@ -157,7 +157,7 @@ class Scraper():
         
         return ('Images are created !') 
     
-    def change_url(self,url=HOME_URL):
+    def change_url(self,endpoint,url=HOME_URL):
         
         
         page = requests.get(url)
@@ -170,7 +170,7 @@ class Scraper():
             
             page_url = next_button['href']
             
-            endpoint = url.replace('index.html','')
+            #endpoint = url.replace('index.html','')
             
             if 'index.html' in url :
                 url = url.replace('index.html',str(page_url))   
@@ -243,6 +243,30 @@ class Scraper():
     
     def get_category_data(self,url=CATEGORY_URL):
         
+        if 'index.html' in url :
+            endpoint = url.replace('index.html','')
+        elif 'page-2.html' in url :
+            endpoint = url.replace('page-2.html','')  
+        elif 'page-3.html' in url :
+            endpoint = url.replace('page-3.html','') 
+        elif 'page-4.html' in url :
+            endpoint = url.replace('page-4.html','')                           
+        elif 'page-5.html' in url :
+            endpoint = url.replace('page-5.html','') 
+        elif 'page-6.html' in url :
+            endpoint = url.replace('page-6.html','') 
+        elif 'page-7.html' in url :
+            endpoint = url.replace('page-7.html','') 
+        elif 'page-8.html' in url :
+            endpoint = url.replace('page-8.html','') 
+        elif 'page-9.html' in url :
+            endpoint = url.replace('page-9.html','') 
+        elif 'page-10.html' in url :
+            endpoint = url.replace('page-10.html','')                                                             
+            
+            
+            
+                    
         if self.next_button_exist(url) is True :
             
             while self.next_button_exist(url) is True :
@@ -263,9 +287,9 @@ class Scraper():
                     
                 #change url
             
-                url = self.change_url(url)
+                url = self.change_url(endpoint,url)
                     
-        elif self.next_button_exist(url) is False :
+        if self.next_button_exist(url) is False :
             book_url_list = self.get_books_url(url)
             i_book = 0
             book_url_list_len = len(book_url_list)
@@ -313,11 +337,11 @@ product_data = oc_scraper.get_product_data()
 
 #oc_scraper.get_categories_urls()
 
-oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
+#oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
 
 #oc_scraper.store_images()
 
-#oc_scraper.get_site_data()
+oc_scraper.get_site_data()
 
 #wee = oc_scraper.change_url('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
 

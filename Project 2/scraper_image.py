@@ -1,3 +1,4 @@
+from numpy import product
 import scraper
 import requests
 
@@ -8,7 +9,7 @@ class ScaperImage():
     
     def save_image(self,product_data):
         
-        product_data = scraper.get_product_data()
+        product_data = scraper.oc_scraper.get_product_data()
         image_url = product_data[9]
         image_name = product_data[2] + '.jpg'
         image_name = image_name.replace(' ','_')
@@ -23,9 +24,17 @@ class ScaperImage():
         return 
       
     def save_all_images(self,url):
-        pass 
+        
+        url = scraper.HOME_URL
+        books_urls = scraper.oc_scraper.get_books_url(url)
+        
+        for book_url in books_urls : 
+            product_data = scraper.product_data
+            self.save_image(product_data)
+        
+        return print('ok!') 
       
       
 new_scrapper = ScaperImage()
 
-new_scrapper.save_image(scraper.product_data)      
+new_scrapper.save_all_images(scraper.HOME_URL)      
