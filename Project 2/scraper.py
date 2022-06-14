@@ -54,8 +54,9 @@ class Scraper():
             
             descrption = description_title.find_next_sibling('p')
             #if descrption is None : à tester avant 
-                
-            product_data.append(descrption.text)
+            if descrption is None :
+                product_data.append('Not available')  
+            else : product_data.append(descrption.text)
             
             header_nav = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('ul',{'class':'breadcrumb'})
             category_tag = header_nav.find_all('li')
@@ -337,11 +338,11 @@ product_data = oc_scraper.get_product_data()
 
 #oc_scraper.get_categories_urls()
 
-#oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
+oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/classics_6/index.html')
 
 #oc_scraper.store_images()
 
-oc_scraper.get_site_data()
+#oc_scraper.get_site_data()
 
 #wee = oc_scraper.change_url('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
 
