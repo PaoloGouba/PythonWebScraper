@@ -305,6 +305,17 @@ class Scraper():
                 i_book +=1
  
         
+        #remove duplicated
+        
+        df = pd.read_csv('C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/' + category_name + '.csv')
+        df.drop_duplicates(inplace=True)
+        df.to_csv('C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/' + category_name + '.csv', index=False)
+
+        df = pd.read_csv('C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/' + category_name + '.csv')
+        df.drop_duplicates(inplace=True)
+        df.to_csv('C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/' + category_name + '.csv', index=False)
+    
+        
         return
     def get_site_data(self):
         
@@ -338,7 +349,7 @@ product_data = oc_scraper.get_product_data()
 
 #oc_scraper.get_categories_urls()
 
-oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/classics_6/index.html')
+oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
 
 #oc_scraper.store_images()
 
