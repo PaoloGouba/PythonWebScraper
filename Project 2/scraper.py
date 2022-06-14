@@ -337,7 +337,7 @@ class Scraper():
     
 oc_scraper = Scraper()    
 
-product_data = oc_scraper.get_product_data()
+#product_data = oc_scraper.get_product_data()
 #category_name = oc_scraper.get_category_name(product_data)
 #oc_scraper.create_csv(category_name)
 #oc_scraper.export_product_data_csv(product_data)
@@ -349,7 +349,7 @@ product_data = oc_scraper.get_product_data()
 
 #oc_scraper.get_categories_urls()
 
-oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
+#oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
 
 #oc_scraper.store_images()
 
