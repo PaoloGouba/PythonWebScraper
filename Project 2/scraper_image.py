@@ -30,6 +30,8 @@ class ScaperImage():
         image_name = image_name.replace('_-_','_')
         image_name = image_name.replace('Vol.','Volume_')
         image_name = image_name.replace('/','_')
+        image_name = image_name.replace('\\','_')
+        image_name = image_name.replace('\'','-')
         
         img_data = requests.get(image_url).content
         
