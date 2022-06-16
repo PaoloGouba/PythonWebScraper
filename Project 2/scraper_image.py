@@ -25,6 +25,7 @@ class ScaperImage():
         image_name = image_name.replace('(','')
         image_name = image_name.replace(')','')
         image_name = image_name.replace('*','xxx')
+        image_name = image_name.replace('?','')
         img_data = requests.get(image_url).content
         
         with open('C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/Project 2/Images/' + image_name, 'wb') as handler:
