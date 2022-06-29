@@ -13,6 +13,8 @@ class ScaperImage():
         
         
         product_data = scraper.oc_scraper.get_product_data(url)
+        
+        #utiliser directement le titre
         image_url = product_data[9]
         image_name = product_data[2] + '.jpg'
         image_name = image_name.replace(' ','_')
