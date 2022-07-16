@@ -1,20 +1,21 @@
 # Project 2 : Scraping
 
-prerequis
+Prerequisiti :
+- Installare Python 3+ sulla macchina
+- Installare le dipendenze disponibili su requirements.txt
 
 # Installation
-Revoir les 1000 livres
 
-1 installer le depend
+- Installare le dipendenze con il comando "pip install -r requirements.txt"
 
-pip install -r requirements.txt
 
 
 Cloner le projet
 
 Exectuter le commandes pour excuter les script
 
-Script features : 
+# Script features : 
+## Scraping 
 
 - Get the following data from the page https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html : 
     - product_page_url
