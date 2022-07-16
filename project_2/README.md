@@ -1,21 +1,19 @@
-# Project 2 : Scraping
-
-Prerequisiti :
-- Installare Python 3+ sulla macchina
-- Installare le dipendenze disponibili su requirements.txt
-
-# Installation
-
-- Installare le dipendenze con il comando "pip install -r requirements.txt"
+# Project 2 : Web Scraping
 
 
+## Prerequisites and Installation:
 
-Cloner le projet
+- Install Python 3+ on your machine
+- Clone the contents of the folder on your machine
+- Install the dependencies with the command "pip install -r requirements.txt"
 
-Exectuter le commandes pour excuter les script
+## Execution of the script
 
-# Script features : 
-## Scraping 
+- Go to the src folder via your terminal
+- Type python main.py and hit enter to run the program
+- The different data, reported in the script characteristics will be recovered, cleaned and sorted
+
+### Script features : 
 
 - Get the following data from the page https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html : 
     - product_page_url
