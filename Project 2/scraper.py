@@ -1,21 +1,121 @@
-import csv
 import requests
-import unidecode
-import pandas as pd
 from bs4 import BeautifulSoup
+import csv
+import unidecode
+import os
 
 
 PRODUCT_URL = 'https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html'
-CATEGORY_URL = 'https://books.toscrape.com/catalogue/category/books/music_14/index.html'
+CATEGORY_URL = 'https://books.toscrape.com/catalogue/category/books/business_35/index.html'
 HOME_URL = 'https://books.toscrape.com/index.html'
 CSV_HEADER = ['product_page_url','universal_product_code','title','price_including_tax','price_excluding_tax','number_available','product_description','category','review_rating','image_url']
 HEADER = "SEP=,"
+DEFAULT_IMAGES_FOLDER_PATH = 'C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/Project-2/Images/'
+
+
+## -- Scraper
 
 class Scraper():
     def __init__(self):
         
         return
     
+    ## -- Tools --
+    
+    def clean_title(title):
+        
+        title = title.replace(' ','_')
+        title = title.replace('|','_')
+        title = title.replace(',','_')
+        title = title.replace(':','_')
+        title = title.replace('&','_and_')
+        title = title.replace('...','_')
+        title = title.replace('#','Number_')
+        title = title.replace('(','')
+        title = title.replace(')','')
+        title = title.replace('*','xxx')
+        title = title.replace('?','')
+        title = title.replace('___','_')
+        title = title.replace('_-_','_')
+        title = title.replace('Vol.','Volume_')
+        title = title.replace('/','_')
+        title = title.replace('\\','_')
+        title = title.replace('\'','-')
+        title = title.replace('\"','')
+        
+        return title
+    
+    def create_folder(self):
+        #make dir images
+        directory = "Images"
+        parent_dir = "C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/Project-2/"
+        path = os.path.join(parent_dir, directory)
+        os.mkdir(path)
+        
+        return print("Directory '% s' created" % directory)
+
+    def next_button_exist(self,url=CATEGORY_URL):
+        
+        page = requests.get(url)
+        
+        if page.status_code == 200:
+            parsed_page = BeautifulSoup(page.content,'lxml')
+            
+            section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
+            next_button = section.find('li',{'class':'next'})
+            if next_button is None :
+                print('false')
+                return False
+            else : 
+                print('True')
+                return True
+            
+            
+        return            
+    
+    def change_url(self,endpoint,url=HOME_URL):
+        
+        
+        page = requests.get(url)
+        
+        if page.status_code == 200:
+            
+            parsed_page = BeautifulSoup(page.content,'lxml')
+            section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
+            next_button = section.find('li',{'class':'next'}).find('a')
+            
+            page_url = next_button['href']
+            
+            #endpoint = url.replace('index.html','')
+            
+            if 'index.html' in url :
+                url = url.replace('index.html',str(page_url))   
+                print('ciao')  
+            else : 
+                print('this is not the index page') 
+                url = url.replace('index.html','')
+                url = endpoint + page_url  
+               
+
+
+        
+        return url
+    
+    def create_csv(self,category_name):
+        
+        file_name = category_name + '.csv' 
+        with open(file_name, "a",newline='') as file:
+            writer = csv.writer(file)
+            #writer.writerow(HEADER)
+            writer.writerow(CSV_HEADER)
+
+        return
+   
+   
+   
+   
+    ## -- Get Data --
+
     def get_product_data(self,url=PRODUCT_URL):
         
         product_data = []
@@ -38,6 +138,8 @@ class Scraper():
             title = title.text
             
             title = title.strip()
+            
+            #title = self.clean_title(title)
            
             product_data.append(title)
             
@@ -86,107 +188,14 @@ class Scraper():
             #image_url
             
         return product_data
+    
     def get_category_name(self,product_data):
         category_name = product_data[7]
         return category_name
-    def create_csv(self,category_name):
-        
-        file_name = category_name + '.csv' 
-        with open(file_name, "a",newline='') as file:
-            writer = csv.writer(file)
-            #writer.writerow(HEADER)
-            writer.writerow(CSV_HEADER)
-
-        return
-    def export_product_data_csv(self,product_data,url=PRODUCT_URL):
-        
-        product_data = self.get_product_data(url)
-        
-        row = []
-        for data in product_data :
-            data = unidecode.unidecode(data)
-            row.append(str(data))
-        
-        file_name = str(row[7]) + '.csv' 
-        with open(file_name, "a",newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(row)
-        
-        return
-    def next_button_exist(self,url=CATEGORY_URL):
-        
-        page = requests.get(url)
-        
-        if page.status_code == 200:
-            parsed_page = BeautifulSoup(page.content,'lxml')
-            
-            section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
-            next_button = section.find('li',{'class':'next'})
-            if next_button is None :
-                print('false')
-                return False
-            else : 
-                print('True')
-                return True
-            
-            
-        return            
-    def save_image(self,product_data):
-        
-        product_data = self.get_product_data()
-        image_url = product_data[9]
-        image_name = product_data[2] + '.jpg'
-        image_name = image_name.replace(' ','_')
-        image_name = image_name.replace('|','')
-        image_name = image_name.replace(',','_')
-        #image_name = image_name.replace('.','')
-        
-        img_data = requests.get(image_url).content
-        
-        with open(image_name, 'wb') as handler:
-            handler.write(img_data)
-        return 
-      
-    def store_images(self,url=HOME_URL):
-        
-        books_urls = self.get_books_url(url)
-        
-        for book_url in books_urls :
-            book_url = 'https://books.toscrape.com/' + book_url
-            product_data = self.get_product_data(book_url)
-            self.save_image(product_data)
-        
-        return ('Images are created !') 
-    
-    def change_url(self,endpoint,url=HOME_URL):
-        
-        
-        page = requests.get(url)
-        
-        if page.status_code == 200:
-            
-            parsed_page = BeautifulSoup(page.content,'lxml')
-            section = parsed_page.find('div',{'class':'container-fluid'}).find('div',{'class':'page_inner'}).find('div',{'class':'col-sm-8'}).find('section')
-            next_button = section.find('li',{'class':'next'}).find('a')
-            
-            page_url = next_button['href']
-            
-            #endpoint = url.replace('index.html','')
-            
-            if 'index.html' in url :
-                url = url.replace('index.html',str(page_url))   
-                print('ciao')  
-            else : 
-                print('this is not the index page') 
-                url = url.replace('index.html','')
-                url = endpoint + page_url  
-               
-
-
-        
-        return url
     
     def get_books_url(self,url=CATEGORY_URL):
+    
+    
 
         page = requests.get(url)
                 
@@ -221,6 +230,7 @@ class Scraper():
             
         
         return books_url
+    
     def get_categories_urls(self,url=HOME_URL):
         
         
@@ -241,6 +251,90 @@ class Scraper():
         
         print(categories_urls)
         return categories_urls
+    
+
+
+## -- Save and Export Data --
+
+    def export_product_data_csv(self,product_data,url=PRODUCT_URL):
+        
+        product_data = self.get_product_data(url)
+        
+        row = []
+        for data in product_data :
+            data = unidecode.unidecode(data)
+            row.append(str(data))
+        
+        file_name = str(row[7]) + '.csv' 
+        with open(file_name, "a",newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(row)
+        
+        return
+    
+    def save_image(self,product_data,url,folder_path ='C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/Project-2/Images/'):
+        
+        product_data = self.get_product_data(url)
+        image_url = product_data[9]
+        image_name = product_data[2] + '.jpg'
+
+        image_name = image_name.replace(' ','_')
+        image_name = image_name.replace('|','_')
+        image_name = image_name.replace(',','_')
+        image_name = image_name.replace(':','_')
+        image_name = image_name.replace('&','_and_')
+        image_name = image_name.replace('...','_')
+        image_name = image_name.replace('#','Number_')
+        image_name = image_name.replace('(','')
+        image_name = image_name.replace(')','')
+        image_name = image_name.replace('*','xxx')
+        image_name = image_name.replace('?','')
+        image_name = image_name.replace('___','_')
+        image_name = image_name.replace('_-_','_')
+        image_name = image_name.replace('Vol.','Volume_')
+        image_name = image_name.replace('/','_')
+        image_name = image_name.replace('\\','_')
+        image_name = image_name.replace('\'','-')
+        image_name = image_name.replace('\"','')
+        
+        img_data = requests.get(image_url).content
+        
+        with open(folder_path + image_name, 'wb') as handler:
+            handler.write(img_data)
+        return 
+      
+    def store_images(self,url=HOME_URL):
+        
+        endpoint = 'https://books.toscrape.com/catalogue/'
+        
+        url = HOME_URL
+        
+        
+        if self.next_button_exist(url) is True :
+            
+            while self.next_button_exist(url) is True :
+        
+                #url = scraper.HOME_URL
+                books_urls = self.get_books_url(url)
+                
+                for book_url in books_urls : 
+                    if 'catalogue' in book_url :
+                        book_url = 'https://books.toscrape.com/' + book_url
+                    else : book_url = 'https://books.toscrape.com/catalogue/' + book_url    
+                    product_data = self.get_product_data(book_url)
+                    self.save_image(product_data,book_url,DEFAULT_IMAGES_FOLDER_PATH)
+                    
+                url = self.change_url(endpoint,url)  
+        else :
+            books_urls = self.get_books_url(url)
+            for book_url in books_urls : 
+                if 'catalogue' in book_url :
+                    book_url = 'https://books.toscrape.com/' + book_url
+                else : book_url = 'https://books.toscrape.com/catalogue' + book_url    
+                product_data = self.get_product_data(book_url)
+                self.save_image(product_data,book_url,DEFAULT_IMAGES_FOLDER_PATH)
+        
+        return ('Images are created !') 
     
     def get_category_data(self,url=CATEGORY_URL):
         
@@ -281,8 +375,8 @@ class Scraper():
                 while book_url_list_len > i_book :
                     book_url = book_url_list[i_book]
                     product_data = self.get_product_data(book_url)
-
                     self.export_product_data_csv(product_data,book_url)
+                    self.save_image(product_data,book_url)
                     i_book +=1
                     
                     
@@ -302,21 +396,14 @@ class Scraper():
                 product_data = self.get_product_data(book_url)
 
                 self.export_product_data_csv(product_data,book_url)
+                self.save_image(product_data,book_url)
                 i_book +=1
  
         
-        #remove duplicated
-        
-        df = pd.read_csv('C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/' + category_name + '.csv')
-        df.drop_duplicates(inplace=True)
-        df.to_csv('C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/' + category_name + '.csv', index=False)
-
-        df = pd.read_csv('C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/' + category_name + '.csv')
-        df.drop_duplicates(inplace=True)
-        df.to_csv('C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/' + category_name + '.csv', index=False)
-    
+ 
         
         return
+    
     def get_site_data(self):
         
         categories_urls = self.get_categories_urls()
@@ -334,32 +421,35 @@ class Scraper():
         return
     
 
+
+
+## -- Main program
+
+def start_scraper():
     
-oc_scraper = Scraper()    
+    oc_scraper = Scraper()  
 
-#product_data = oc_scraper.get_product_data()
-#category_name = oc_scraper.get_category_name(product_data)
-#oc_scraper.create_csv(category_name)
-#oc_scraper.export_product_data_csv(product_data)
-#oc_scraper.save_image(product_data)
+    # 1) Get product data and store in csv   
 
-#oc_scraper.next_button_exist()
+    product_data = oc_scraper.get_product_data()
+    category_name = oc_scraper.get_category_name(product_data)
+    oc_scraper.create_csv(category_name)
+    oc_scraper.export_product_data_csv(product_data)
+    oc_scraper.create_folder()
+    oc_scraper.save_image(product_data,PRODUCT_URL)
 
-#oc_scraper.get_books_url()
+    # 2) get business book informations and store in a csv
+    
+    oc_scraper.get_category_data()
 
-#oc_scraper.get_categories_urls()
+    # 3) Get all site data and store in differents CSV files
+    oc_scraper.get_site_data()
 
-#oc_scraper.get_category_data('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
-
-#oc_scraper.store_images()
-
-#oc_scraper.get_site_data()
-
-#wee = oc_scraper.change_url('https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html')
-
-#wee = oc_scraper.change_url()
-
-#print(wee)
+    # 4) store all images in a folder
+    oc_scraper.store_images('https://books.toscrape.com/catalogue/page-1.html')    
+    
+    return
+    
 
 
-#we get for download images
+start_scraper()

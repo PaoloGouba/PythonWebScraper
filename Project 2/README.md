@@ -1,6 +1,20 @@
-# Second project
+# Project 2 : Scraping
 
-This script has more features : 
+prerequis
+
+# Installation
+Revoir les 1000 livres
+
+1 installer le depend
+
+pip install -r requirements.txt
+
+
+Cloner le projet
+
+Exectuter le commandes pour excuter les script
+
+Script features : 
 
 - Get the following data from the page https://books.toscrape.com/catalogue/chronicles-vol-1_462/index.html : 
     - product_page_url
@@ -18,4 +32,6 @@ This script has more features :
 - Get all informations from the website http://books.toscrape.com/
 - Store informations in differents CSV for categories 
     - the name of the file have to contain the category name
-- Store all images in a ZIP folder
+- get all images
+
+
