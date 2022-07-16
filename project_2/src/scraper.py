@@ -10,7 +10,7 @@ CATEGORY_URL = 'https://books.toscrape.com/catalogue/category/books/business_35/
 HOME_URL = 'https://books.toscrape.com/index.html'
 CSV_HEADER = ['product_page_url','universal_product_code','title','price_including_tax','price_excluding_tax','number_available','product_description','category','review_rating','image_url']
 HEADER = "SEP=,"
-DEFAULT_IMAGES_FOLDER_PATH = 'C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/Project-2/Images/'
+DEFAULT_IMAGES_FOLDER_PATH = 'C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/project_2/Images/'
 
 
 ## -- Scraper
@@ -48,7 +48,7 @@ class Scraper():
     def create_folder(self):
         #make dir images
         directory = "Images"
-        parent_dir = "C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/Project-2/"
+        parent_dir = "C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/project_2/"
         path = os.path.join(parent_dir, directory)
         os.mkdir(path)
         
@@ -272,7 +272,7 @@ class Scraper():
         
         return
     
-    def save_image(self,product_data,url,folder_path ='C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/Project-2/Images/'):
+    def save_image(self,product_data,url,folder_path ='C:/Users/PaoloGouba/OneDrive - BeezUP/Documents/School/OC-DA-Python/project_2/Images/'):
         
         product_data = self.get_product_data(url)
         image_url = product_data[9]
