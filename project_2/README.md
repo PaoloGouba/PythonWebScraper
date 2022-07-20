@@ -6,6 +6,12 @@
 ### Clone repository 
 git clone https://github.com/PaoloGouba/OC-DA-Python.git
 
+### Create and activate Virtual Environment
+python -m venv venv
+source /venv/Script/activate pour windows
+
+source /venv/bin/activate pour Linux
+
 ### Install the dependencies 
 with the command "pip install -r requirements.txt"
 
