@@ -112,8 +112,6 @@ class Scraper():
         return
    
    
-   
-   
     ## -- Get Data --
 
     def get_product_data(self,url=PRODUCT_URL):
@@ -252,7 +250,6 @@ class Scraper():
         print(categories_urls)
         return categories_urls
     
-
 
 ## -- Save and Export Data --
 
@@ -445,8 +442,9 @@ def start_scraper():
     # 3) Get all site data and store in differents CSV files
     oc_scraper.get_site_data()
 
+    # now I store images when I get books, so I've commented the function store_images
     # 4) store all images in a folder
-    oc_scraper.store_images('https://books.toscrape.com/catalogue/page-1.html')    
+    #oc_scraper.store_images('https://books.toscrape.com/catalogue/page-1.html')    
     
     return
     

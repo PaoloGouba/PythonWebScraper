@@ -1,17 +1,20 @@
 # Project 2 : Web Scraping
 
 
-## Prerequisites and Installation:
+## Installation:
 
-- Install Python 3+ on your machine
-- Clone the contents of the folder on your machine
-- Install the dependencies with the command "pip install -r requirements.txt"
+### Clone repository 
+git clone https://github.com/PaoloGouba/OC-DA-Python.git
+
+### Install the dependencies 
+with the command "pip install -r requirements.txt"
 
 ## Execution of the script
 
-- Go to the src folder via your terminal
+- Go to folder OC-DA-Python/project_2/src in your terminal
 - Type python main.py and hit enter to run the program
-- The different data, reported in the script characteristics will be recovered, cleaned and sorted
+
+The different data, reported in the script characteristics will be recovered, cleaned and sorted
 
 ### Script features : 
 
