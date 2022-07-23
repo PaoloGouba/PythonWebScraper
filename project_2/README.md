@@ -6,7 +6,6 @@
 ### Clone repository 
 git clone https://github.com/PaoloGouba/OC-DA-Python.git
 
-<<<<<<< HEAD
 ### Install and activate virtual environment 
 #### Installation
 Windows :
@@ -22,13 +21,6 @@ venv/Scripts/activate
 Mac / Linux :
 venv/Bin/activate
 
-=======
-### Create and activate Virtual Environment
-python -m venv venv
-source /venv/Script/activate pour windows
-
-source /venv/bin/activate pour Linux
->>>>>>> 8701c90096d7e0d42c8735bc5f911661edabfdde
 
 ### Install the dependencies 
 with the command "pip install -r requirements.txt"
