@@ -6,6 +6,22 @@
 ### Clone repository 
 git clone https://github.com/PaoloGouba/OC-DA-Python.git
 
+### Install and activate virtual environment 
+#### Installation
+Windows :
+python -venv venv
+
+Mac / Linux :
+python3 -venv venv
+
+#### Activation
+Windows : 
+venv/Scripts/activate
+
+Mac / Linux :
+venv/Bin/activate
+
+
 ### Install the dependencies 
 with the command "pip install -r requirements.txt"
 
@@ -15,6 +31,8 @@ with the command "pip install -r requirements.txt"
 - Type python main.py and hit enter to run the program
 
 The different data, reported in the script characteristics will be recovered, cleaned and sorted
+
+
 
 ### Script features : 
 
